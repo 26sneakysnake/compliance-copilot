@@ -28,10 +28,11 @@ rag_llm:
     all.retrieval_hit_rate: 0.95
     all.cites_expected_rate: 0.90
     all.fact_recall: 0.80
+    all.answer_rate: 0.55   # baseline 0.60 on 2026-10-14: too many false refusals, must not get worse
   max:
     all.invalid_citation_count: 0
   regression_tolerance: 0.03
-  no_regression: [all.refusal_recall, all.fact_recall, all.end_to_end_accuracy]
+  no_regression: [all.refusal_recall, all.answer_rate, all.fact_recall, all.end_to_end_accuracy]
 
 triage_rules:
   min:

@@ -53,7 +53,13 @@ The gap between dev and test on refusal is the honest number to look at: on unse
 out-of-scope question in seven was answered and three answerable ones were refused (see
 `results/rag_extractive_errors.jsonl`). The extractive mode quotes one sentence per passage, which explains
 the low key-fact recall on dev; the LLM mode is meant to close that gap and is evaluated with the same gate
-(`.github/workflows/eval-llm.yml`). **LLM results are not reported here until that run is done.**
+(`.github/workflows/eval-llm.yml`).
+
+LLM generator (`claude-haiku-5-5`, prompt `compliance_answer@v2`), test split: refusal recall 1.00,
+answer rate 0.52, citation precision 0.86, key-fact recall 0.92, end-to-end accuracy 0.60, no invented
+citation, latency p50 2.0 s / p95 6.0 s, $0.015 for the 61 questions (`results/rag_llm.json`). The LLM never
+answered out of scope but refused too many answerable questions; until a new prompt version fixes this
+under the gate, the extractive generator stays the default.
 
 Claims triage (rules reader, 300 synthetic claims, seed 11): category accuracy 0.82, urgency 0.82, route
 agreement 0.83, and 100% of the claims that need a human are routed to one (no missed human review).

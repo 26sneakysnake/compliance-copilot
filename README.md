@@ -95,8 +95,27 @@ Thresholds were tuned on the `dev` split only. `test` is the number to trust.
 Claims triage, rules reader, 300 synthetic claims (seed 11, not the seed the rules were written on):
 category accuracy 0.82, urgency 0.82, route agreement 0.83, **0 claims needing a human sent elsewhere**.
 
-The **LLM column is deliberately empty**: I will not fill it with estimates. The LLM path is covered by tests
-with fake clients and by the manual `eval-llm` workflow, which applies the same gate.
+### LLM generator (Claude Haiku 5.5, prompt `compliance_answer@v2`, same golden set)
+
+Run with the manual `eval-llm` workflow on 14 October 2026; raw numbers in `results/rag_llm.json`.
+
+| Metric | Extractive (test) | Claude Haiku 5.5 (test) |
+|---|---|---|
+| Refusal recall on out-of-scope questions | 0.86 | **1.00** |
+| Answer rate on answerable questions | 0.87 | **0.52** |
+| Answer cites an expected passage | 1.00 | 1.00 |
+| Citation precision | 0.63 | **0.86** |
+| Key-fact recall (answered questions) | 0.95 | 0.92 |
+| End-to-end accuracy | 0.83 | 0.60 |
+| Invented citations | 0 | 0 |
+| Latency p50 / p95 | < 2 ms | 2.0 s / 6.0 s |
+| Cost for the 61 questions | 0 | $0.015 |
+
+The LLM is safer (it refused every out-of-scope question and cites more precisely) but it refuses **40% of
+answerable questions**, which makes it less useful than the extractive floor today. That is the next thing to
+fix: inspect whether those refusals come from the model replying `INSUFFICIENT_CONTEXT` or from the citation
+check dropping sentences, then ship a `compliance_answer@v3` prompt only if it raises the answer rate without
+lowering refusal recall. The gate now blocks any LLM run whose answer rate drops below this baseline.
 
 ### What the errors say (`results/*_errors.jsonl`)
 
@@ -160,7 +179,7 @@ infra/               Azure setup and deployment guide
 
 ## Next steps
 
-1. Run and record the LLM column; compare cost and latency per question with the extractive floor.
+1. Bring the LLM false-refusal rate down (40% today) with a new prompt version, under the same gate.
 2. Load the official EUR-Lex corpus and re-run the gate on it.
 3. Add an embedding retriever behind the same interface and keep it only if it beats BM25 on `test`.
 4. French questions (EUR-Lex publishes every act in French).
