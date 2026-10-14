@@ -1,0 +1,4 @@
+# LLM generator (Claude) and OpenTelemetry export (Langfuse, Jaeger, Azure Monitor...)
+anthropic>=0.40
+opentelemetry-sdk>=1.25
+opentelemetry-exporter-otlp-proto-http>=1.25

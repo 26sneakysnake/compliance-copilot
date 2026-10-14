@@ -1,0 +1,519 @@
+# Sample regulatory corpus used by tests, the evaluation gate and the demo API.
+#
+# IMPORTANT: every `text` below is a SHORT PARAPHRASE written for this project,
+# not the official wording. It is good enough to test retrieval, citation and
+# refusal logic offline. It is NOT legal advice and must not be quoted as law.
+# The official texts are fetched from EUR-Lex with `python -m ccp.cli fetch-official`
+# (see README) and are the source of record.
+#
+# Fields follow the data contract in contracts/regulatory_chunks.yaml.
+last_reviewed: "2026-10-14"
+documents:
+  # ------------------------------------------------------------------ EU AI Act
+  - regulation: AI_ACT
+    celex: "32024R1689"
+    articles:
+      - article: "3"
+        title: "Definitions (selected)"
+        text: >-
+          An 'AI system' is a machine-based system designed to operate with varying levels of autonomy,
+          that may adapt after deployment and that infers from the input it receives how to generate outputs
+          such as predictions, content, recommendations or decisions that can influence physical or virtual
+          environments. A 'provider' develops an AI system or has it developed and places it on the market or
+          puts it into service under its own name or trademark. A 'deployer' is a person or body using an AI
+          system under its authority, except for personal non-professional activity.
+      - article: "4"
+        title: "AI literacy"
+        text: >-
+          Providers and deployers must take measures to support the AI literacy of their staff and of other
+          persons operating or using AI systems on their behalf, taking into account their technical knowledge,
+          experience, education and training and the context of use. This duty applies regardless of the risk
+          level of the system and has applied since 2 February 2025. The Digital Omnibus on AI (Regulation (EU)
+          2026/1744) reworded the duty from ensuring a sufficient level of literacy to taking measures to support it.
+      - article: "5"
+        title: "Prohibited AI practices"
+        text: >-
+          Certain AI practices are banned outright: manipulative or deceptive techniques that materially distort
+          behaviour and cause significant harm; exploiting vulnerabilities linked to age, disability or a social
+          or economic situation; social scoring leading to detrimental or unjustified treatment; assessing the risk
+          that a person will commit a crime based solely on profiling or personality traits; untargeted scraping of
+          facial images to build facial recognition databases; emotion recognition in the workplace and in
+          education except for medical or safety reasons; biometric categorisation to infer sensitive attributes
+          such as race, political opinions, trade union membership, religion or sexual orientation; and real-time
+          remote biometric identification in publicly accessible spaces for law enforcement, save narrow exceptions.
+          These prohibitions apply since 2 February 2025.
+      - article: "6"
+        title: "Classification rules for high-risk AI systems"
+        text: >-
+          An AI system is high-risk if it is a safety component of, or itself, a product covered by the Union
+          harmonisation legislation in Annex I that requires third-party conformity assessment, or if it falls under
+          one of the use cases listed in Annex III. An Annex III system is not high-risk when it does not pose a
+          significant risk of harm, for example when it performs a narrow procedural task, improves the result of a
+          previously completed human activity, detects decision patterns without replacing human assessment, or
+          performs a preparatory task. An Annex III system that performs profiling of natural persons is always
+          high-risk. A provider that concludes its Annex III system is not high-risk must document that assessment
+          before placing it on the market and register the system.
+      - article: "Annex III (5)"
+        title: "High-risk use cases: access to essential private and public services"
+        text: >-
+          Annex III point 5 lists as high-risk: AI systems used by public authorities to evaluate eligibility for
+          public assistance benefits and services; AI systems used to evaluate the creditworthiness of natural
+          persons or establish their credit score, with the exception of systems used to detect financial fraud;
+          AI systems used for risk assessment and pricing in relation to natural persons in the case of life and
+          health insurance; and AI systems used to evaluate and classify emergency calls, dispatch emergency
+          services or triage patients. Claims handling in property and casualty insurance is not listed as such.
+      - article: "9"
+        title: "Risk management system"
+        text: >-
+          Providers of high-risk AI systems must establish, implement, document and maintain a risk management
+          system. It is a continuous iterative process run over the whole lifecycle: identify and analyse known and
+          reasonably foreseeable risks to health, safety and fundamental rights; estimate and evaluate risks that
+          may emerge under intended use and reasonably foreseeable misuse; evaluate risks arising from post-market
+          monitoring data; and adopt appropriate targeted measures so that residual risk is judged acceptable.
+          High-risk systems must be tested against prior defined metrics and probabilistic thresholds, and the
+          impact on persons under 18 and other vulnerable groups must be considered.
+      - article: "10"
+        title: "Data and data governance"
+        text: >-
+          Training, validation and testing data sets of high-risk AI systems must be subject to data governance and
+          management practices covering design choices, data collection processes and the origin of data (and for
+          personal data the original purpose of collection), preparation operations such as annotation, labelling,
+          cleaning and aggregation, the assumptions made, an assessment of availability, quantity and suitability,
+          an examination of possible biases and measures to detect, prevent and mitigate them, and the
+          identification of data gaps. Data sets must be relevant, sufficiently representative and, to the best
+          extent possible, free of errors and complete in view of the intended purpose.
+      - article: "11"
+        title: "Technical documentation"
+        text: >-
+          The technical documentation of a high-risk AI system must be drawn up before it is placed on the market or
+          put into service and kept up to date. It must demonstrate compliance with the requirements and contain at
+          least the elements listed in Annex IV, such as the general description, the development process, the data
+          used, the monitoring, functioning and control of the system, the risk management system and the metrics
+          used to measure accuracy and robustness. SMEs and start-ups may provide it in a simplified form.
+      - article: "12"
+        title: "Record-keeping (logging)"
+        text: >-
+          High-risk AI systems must technically allow the automatic recording of events (logs) over their lifetime.
+          Logging must make it possible to identify situations that may present a risk or lead to a substantial
+          modification, to support post-market monitoring, and to monitor the operation of the system by deployers.
+      - article: "13"
+        title: "Transparency and provision of information to deployers"
+        text: >-
+          High-risk AI systems must be designed so that deployers can interpret their output and use it
+          appropriately. They come with instructions for use stating the identity of the provider, the
+          characteristics, capabilities and limitations of performance, the levels of accuracy and the metrics used,
+          known circumstances that may lead to risks, the human oversight measures, the expected lifetime and
+          maintenance, and the mechanisms that allow deployers to collect and interpret logs.
+      - article: "14"
+        title: "Human oversight"
+        text: >-
+          High-risk AI systems must be designed so that natural persons can effectively oversee them while they are
+          in use, in order to prevent or minimise risks to health, safety or fundamental rights. Oversight measures
+          must enable the persons assigned to understand the capacities and limitations of the system, remain aware
+          of automation bias, correctly interpret the output, decide not to use the system or to disregard, override
+          or reverse its output, and intervene or interrupt it through a stop procedure.
+      - article: "15"
+        title: "Accuracy, robustness and cybersecurity"
+        text: >-
+          High-risk AI systems must achieve an appropriate level of accuracy, robustness and cybersecurity and perform
+          consistently throughout their lifecycle. Accuracy levels and metrics are declared in the instructions for
+          use. Systems should be resilient to errors, faults and inconsistencies, for example through technical
+          redundancy and fail-safe plans, and resilient to attempts by unauthorised third parties to alter their use
+          or outputs, including data poisoning, model poisoning, adversarial examples and confidentiality attacks.
+      - article: "17"
+        title: "Quality management system"
+        text: >-
+          Providers of high-risk AI systems must put in place a documented quality management system with written
+          policies and procedures covering regulatory compliance strategy, design control and verification, testing
+          and validation, data management, risk management, post-market monitoring, serious incident reporting,
+          record-keeping, resource management and an accountability framework. For financial institutions subject to
+          internal governance rules under Union financial services law, the obligation is largely deemed fulfilled by
+          complying with those rules.
+      - article: "26"
+        title: "Obligations of deployers of high-risk AI systems"
+        text: >-
+          Deployers of high-risk AI systems must use them in accordance with the instructions for use, assign human
+          oversight to people with the necessary competence, training and authority, ensure input data under their
+          control is relevant and sufficiently representative, monitor operation and inform the provider and
+          authorities of risks and serious incidents, keep the automatically generated logs under their control for
+          at least six months, inform workers' representatives before use at the workplace, and inform natural
+          persons that they are subject to the use of such a system when it makes or assists decisions about them.
+          For financial institutions, monitoring and log keeping can be carried out within the governance and
+          documentation framework required by financial services law.
+      - article: "27"
+        title: "Fundamental rights impact assessment"
+        text: >-
+          Before deploying a high-risk AI system, deployers that are public bodies or private entities providing
+          public services, and deployers of systems for credit scoring or for life and health insurance risk
+          assessment and pricing (Annex III points 5(b) and 5(c)), must assess its impact on fundamental rights.
+          The assessment describes the processes in which the system is used, the period and frequency of use, the
+          categories of persons affected, the specific risks of harm, the human oversight measures and the measures
+          to take if risks materialise, including internal governance and complaint mechanisms. The market
+          surveillance authority is notified of the results. It can complement a GDPR data protection impact assessment.
+      - article: "50"
+        title: "Transparency obligations for certain AI systems"
+        text: >-
+          Providers must ensure that AI systems intended to interact directly with natural persons inform them that
+          they are interacting with an AI system, unless this is obvious from the context. Providers of systems that
+          generate synthetic audio, image, video or text must mark the outputs in a machine-readable format so they
+          are detectable as artificially generated. Deployers of emotion recognition or biometric categorisation
+          systems must inform the persons exposed, and deployers must disclose deep fakes and AI-generated text
+          published to inform the public on matters of public interest unless it underwent human editorial review.
+          The information must be given clearly at the latest at the first interaction. These obligations apply from
+          2 August 2026.
+      - article: "72"
+        title: "Post-market monitoring by providers"
+        text: >-
+          Providers must establish and document a post-market monitoring system proportionate to the nature and risks
+          of the high-risk AI system. It actively and systematically collects, documents and analyses relevant data on
+          the performance of the system throughout its lifetime, so that the provider can evaluate continuous
+          compliance. The post-market monitoring plan is part of the technical documentation.
+      - article: "73"
+        title: "Reporting of serious incidents"
+        text: >-
+          Providers of high-risk AI systems must report any serious incident to the market surveillance authority of
+          the Member State where it occurred, immediately after establishing a causal link or its reasonable
+          likelihood and in any event not later than 15 days after becoming aware of it. The deadline is shortened to
+          2 days for a widespread infringement or a serious disruption of critical infrastructure, and to 10 days in
+          the event of the death of a person.
+      - article: "99"
+        title: "Penalties"
+        text: >-
+          Non-compliance with the prohibited practices of Article 5 can be fined up to EUR 35 million or 7% of total
+          worldwide annual turnover, whichever is higher. Non-compliance with most other operator obligations,
+          including those of providers, deployers and the transparency obligations of Article 50, can be fined up to
+          EUR 15 million or 3%. Supplying incorrect, incomplete or misleading information to notified bodies or
+          authorities can be fined up to EUR 7.5 million or 1%. For SMEs, start-ups and, since the Digital Omnibus,
+          small mid-caps, the lower of the two amounts applies.
+      - article: "113"
+        title: "Entry into force and application"
+        text: >-
+          The AI Act entered into force on 1 August 2024. The prohibitions and the AI literacy duty apply from
+          2 February 2025; governance rules, obligations for general-purpose AI models and penalties apply from
+          2 August 2025; most other provisions, including the transparency obligations of Article 50, apply from
+          2 August 2026. Following the Digital Omnibus on AI (Regulation (EU) 2026/1744), the obligations for
+          high-risk systems listed in Annex III apply from 2 December 2027 and those for high-risk systems covered by
+          Annex I product legislation from 2 August 2028.
+      - article: "53"
+        title: "Obligations for providers of general-purpose AI models"
+        text: >-
+          Providers of general-purpose AI models must draw up and keep up to date technical documentation of the
+          model, provide information and documentation to downstream providers that integrate the model into their
+          AI systems, put in place a policy to comply with Union copyright law, and publish a sufficiently detailed
+          summary of the content used for training. These obligations apply from 2 August 2025 and were not delayed
+          by the Digital Omnibus.
+  - regulation: AI_ACT_OMNIBUS
+    celex: "32026R1744"
+    articles:
+      - article: "Summary"
+        title: "Digital Omnibus on AI: amendments to the AI Act"
+        text: >-
+          Regulation (EU) 2026/1744, the Digital Omnibus on AI, was published in the Official Journal on 24 July 2026
+          and entered into force on 27 July 2026. It postpones the application of obligations for Annex III high-risk
+          AI systems from 2 August 2026 to 2 December 2027 and for Annex I product-related high-risk systems to
+          2 August 2028. It softens the AI literacy duty of Article 4, adds a broader legal basis to process special
+          categories of personal data for bias detection and correction, extends the lower penalty caps to small
+          mid-cap enterprises, adds two new prohibited practices applicable from 2 December 2026, and gives
+          generative systems already on the market before 2 August 2026 until 2 December 2026 to implement
+          machine-readable marking. Obligations for general-purpose AI models are not delayed.
+
+  # ---------------------------------------------------------------------- GDPR
+  - regulation: GDPR
+    celex: "32016R0679"
+    articles:
+      - article: "4"
+        title: "Definitions (selected)"
+        text: >-
+          'Personal data' means any information relating to an identified or identifiable natural person.
+          'Processing' is any operation performed on personal data, automated or not. 'Pseudonymisation' means
+          processing personal data so that it can no longer be attributed to a specific person without additional
+          information kept separately under technical and organisational measures; pseudonymised data remains
+          personal data. 'Profiling' is automated processing used to evaluate personal aspects of a person, such as
+          economic situation, health, preferences, reliability or behaviour.
+      - article: "5"
+        title: "Principles relating to processing of personal data"
+        text: >-
+          Personal data must be processed lawfully, fairly and transparently; collected for specified, explicit and
+          legitimate purposes and not further processed incompatibly (purpose limitation); adequate, relevant and
+          limited to what is necessary (data minimisation); accurate and kept up to date; kept in identifiable form no
+          longer than necessary (storage limitation); and processed with appropriate security (integrity and
+          confidentiality). The controller is responsible for, and must be able to demonstrate, compliance with these
+          principles (accountability).
+      - article: "6"
+        title: "Lawfulness of processing"
+        text: >-
+          Processing is lawful only if at least one legal basis applies: the data subject's consent for specific
+          purposes; necessity for the performance of a contract or pre-contractual steps; compliance with a legal
+          obligation of the controller; protection of vital interests; performance of a task in the public interest
+          or in the exercise of official authority; or the legitimate interests of the controller or a third party,
+          unless overridden by the interests or fundamental rights of the data subject. Public authorities cannot rely
+          on legitimate interests for processing in the performance of their tasks.
+      - article: "9"
+        title: "Processing of special categories of personal data"
+        text: >-
+          Processing personal data revealing racial or ethnic origin, political opinions, religious or philosophical
+          beliefs or trade union membership, and processing genetic data, biometric data for unique identification,
+          health data or data concerning sex life or sexual orientation is prohibited, unless an exception applies,
+          such as explicit consent, obligations in employment and social protection law, vital interests, data made
+          manifestly public by the data subject, legal claims, substantial public interest on the basis of law, health
+          care, public health, or archiving and research with safeguards.
+      - article: "13"
+        title: "Information to be provided where data are collected from the data subject"
+        text: >-
+          When collecting personal data from the data subject, the controller must provide its identity and contact
+          details, the contact details of the data protection officer, the purposes and legal basis of processing, the
+          legitimate interests pursued where relevant, the recipients, any transfer to a third country, the retention
+          period, the data subject's rights, the right to withdraw consent and to lodge a complaint, whether providing
+          the data is required, and the existence of automated decision-making including profiling with meaningful
+          information about the logic involved and its significance and envisaged consequences.
+      - article: "15"
+        title: "Right of access by the data subject"
+        text: >-
+          The data subject has the right to obtain confirmation of whether their personal data is being processed and,
+          if so, access to the data and to information on the purposes, the categories of data, the recipients, the
+          retention period, their rights, the source of the data, and the existence of automated decision-making with
+          meaningful information about the logic involved. The controller must provide a copy of the personal data.
+      - article: "17"
+        title: "Right to erasure ('right to be forgotten')"
+        text: >-
+          The data subject can obtain erasure of their personal data without undue delay when, among other grounds,
+          the data is no longer necessary for its purpose, consent is withdrawn and no other legal basis exists, the
+          person objects and there are no overriding legitimate grounds, or the data was processed unlawfully. Erasure
+          does not apply where processing is necessary for freedom of expression, compliance with a legal obligation,
+          public health, archiving or research purposes, or the establishment, exercise or defence of legal claims.
+      - article: "22"
+        title: "Automated individual decision-making, including profiling"
+        text: >-
+          A data subject has the right not to be subject to a decision based solely on automated processing, including
+          profiling, which produces legal effects concerning them or similarly significantly affects them. This does
+          not apply when the decision is necessary for a contract, authorised by law with suitable safeguards, or based
+          on explicit consent. In the contract and consent cases the controller must implement safeguards, at least the
+          right to obtain human intervention, to express one's point of view and to contest the decision. Such
+          decisions cannot be based on special categories of data unless specific conditions and safeguards apply.
+      - article: "25"
+        title: "Data protection by design and by default"
+        text: >-
+          The controller must implement appropriate technical and organisational measures, such as pseudonymisation
+          and data minimisation, both when determining the means of processing and during processing, to apply the
+          data protection principles effectively. By default, only personal data necessary for each specific purpose
+          may be processed, which applies to the amount of data collected, the extent of processing, the storage
+          period and accessibility.
+      - article: "28"
+        title: "Processor"
+        text: >-
+          A controller may only use processors that provide sufficient guarantees of appropriate technical and
+          organisational measures. Processing by a processor is governed by a contract that sets out the subject
+          matter, duration, nature and purpose of processing, the type of data and categories of data subjects, and
+          requires the processor to act only on documented instructions, ensure confidentiality, implement security
+          measures, use sub-processors only with authorisation, assist the controller, delete or return data at the
+          end of the service and allow audits.
+      - article: "30"
+        title: "Records of processing activities"
+        text: >-
+          Each controller must maintain a record of processing activities under its responsibility, including the
+          purposes, the categories of data subjects and personal data, the categories of recipients, transfers to third
+          countries, the envisaged time limits for erasure and a general description of the security measures.
+          Processors keep a similar record. The record is made available to the supervisory authority on request.
+      - article: "32"
+        title: "Security of processing"
+        text: >-
+          Controllers and processors must implement technical and organisational measures ensuring a level of security
+          appropriate to the risk, including as appropriate pseudonymisation and encryption, the ability to ensure the
+          ongoing confidentiality, integrity, availability and resilience of systems, the ability to restore access to
+          data in a timely manner after an incident, and a process for regularly testing and evaluating the
+          effectiveness of these measures.
+      - article: "33"
+        title: "Notification of a personal data breach to the supervisory authority"
+        text: >-
+          In the case of a personal data breach, the controller must notify the competent supervisory authority without
+          undue delay and, where feasible, not later than 72 hours after becoming aware of it, unless the breach is
+          unlikely to result in a risk to the rights and freedoms of natural persons. A late notification must give the
+          reasons for the delay. A processor must notify the controller without undue delay. The controller documents
+          every breach, its effects and the remedial action taken.
+      - article: "34"
+        title: "Communication of a personal data breach to the data subject"
+        text: >-
+          When a breach is likely to result in a high risk to the rights and freedoms of natural persons, the controller
+          must communicate it to the data subjects without undue delay, in clear and plain language. This is not
+          required if the data was rendered unintelligible, for example by encryption, if subsequent measures ensure the
+          high risk is no longer likely to materialise, or if it would involve disproportionate effort, in which case a
+          public communication is used instead.
+      - article: "35"
+        title: "Data protection impact assessment"
+        text: >-
+          Where processing, in particular using new technologies, is likely to result in a high risk to the rights and
+          freedoms of natural persons, the controller must carry out a data protection impact assessment before the
+          processing. It is required in particular for systematic and extensive evaluation of personal aspects based on
+          automated processing, including profiling, on which decisions with legal or similarly significant effects are
+          based; for large-scale processing of special categories of data or criminal data; and for systematic
+          monitoring of publicly accessible areas on a large scale. It describes the processing, assesses necessity and
+          proportionality, assesses the risks and sets out the measures to address them. The DPO's advice is sought.
+      - article: "83"
+        title: "General conditions for imposing administrative fines"
+        text: >-
+          Fines must be effective, proportionate and dissuasive. Infringements of controller and processor obligations,
+          such as data protection by design, records, security, breach notification and impact assessments, can be
+          fined up to EUR 10 million or 2% of total worldwide annual turnover, whichever is higher. Infringements of the
+          basic principles, the legal bases, the conditions for special categories, data subjects' rights and
+          international transfer rules can be fined up to EUR 20 million or 4%.
+
+  # ---------------------------------------------------------------------- DORA
+  - regulation: DORA
+    celex: "32022R2554"
+    articles:
+      - article: "2"
+        title: "Scope"
+        text: >-
+          DORA applies to a wide range of financial entities, including credit institutions, payment institutions,
+          electronic money institutions, investment firms, crypto-asset service providers, central securities
+          depositories, central counterparties, trading venues, managers of alternative investment funds, UCITS
+          management companies, insurance and reinsurance undertakings, insurance intermediaries, institutions for
+          occupational retirement provision, credit rating agencies and crowdfunding service providers, as well as to
+          ICT third-party service providers. It applies from 17 January 2025.
+      - article: "5"
+        title: "Governance and organisation"
+        text: >-
+          Financial entities must have an internal governance and control framework that ensures effective and prudent
+          management of ICT risk. The management body defines, approves, oversees and is responsible for the
+          implementation of the ICT risk management framework and bears the ultimate responsibility for managing ICT
+          risk. It sets roles and responsibilities, approves the digital operational resilience strategy and the policy
+          on the use of ICT services provided by third parties, allocates the budget, and its members must keep
+          sufficient knowledge and skills on ICT risk, including through regular training.
+      - article: "6"
+        title: "ICT risk management framework"
+        text: >-
+          Financial entities must have a sound, comprehensive and well-documented ICT risk management framework as part
+          of their overall risk management system, including strategies, policies, procedures, ICT protocols and tools
+          to protect information and ICT assets. The framework is documented and reviewed at least once a year, and
+          after major ICT-related incidents, and is subject to regular internal audit. Responsibility for managing ICT
+          risk is assigned to a control function with an appropriate level of independence.
+      - article: "8"
+        title: "Identification"
+        text: >-
+          Financial entities must identify, classify and adequately document all ICT-supported business functions,
+          roles and responsibilities, the information and ICT assets supporting them, and their dependencies, and
+          review this at least yearly. They must identify sources of ICT risk, cyber threats and vulnerabilities,
+          perform a risk assessment upon each major change in the network or information system infrastructure, and
+          maintain inventories, including of processes that depend on ICT third-party service providers.
+      - article: "9"
+        title: "Protection and prevention"
+        text: >-
+          Financial entities must continuously monitor and control the security and functioning of ICT systems and
+          minimise the impact of ICT risk through appropriate tools, policies and procedures. They must have
+          information security policies, limit physical and logical access to what is required for legitimate and
+          approved functions, implement strong authentication mechanisms, protect cryptographic keys, and apply
+          documented ICT change management and patching procedures.
+      - article: "11"
+        title: "Response and recovery"
+        text: >-
+          Financial entities must put in place a comprehensive ICT business continuity policy and associated ICT
+          response and recovery plans, which are tested regularly. They must be able to ensure the continuity of
+          critical or important functions, respond quickly to ICT-related incidents to limit damage, estimate impacts,
+          and implement crisis communication measures.
+      - article: "13"
+        title: "Learning and evolving"
+        text: >-
+          Financial entities must gather information on vulnerabilities, cyber threats and ICT-related incidents, run
+          post-incident reviews after major incidents to identify root causes and improvements, and develop ICT security
+          awareness programmes and digital operational resilience training that are compulsory for all employees and
+          for senior management.
+      - article: "17"
+        title: "ICT-related incident management process"
+        text: >-
+          Financial entities must define, establish and implement an ICT-related incident management process to detect,
+          manage and notify incidents. They record all ICT-related incidents and significant cyber threats, use early
+          warning indicators, classify incidents by priority and severity, assign roles and responsibilities, define
+          communication plans for staff, clients and the media, report at least major incidents to senior management,
+          and set up response procedures to mitigate impacts and restore services.
+      - article: "18"
+        title: "Classification of ICT-related incidents and cyber threats"
+        text: >-
+          Incidents are classified and their impact determined on the basis of criteria including the number and
+          relevance of clients or financial counterparts affected and the amount or number of transactions affected,
+          the reputational impact, the duration and service downtime, the geographical spread (in particular when more
+          than two Member States are affected), data losses affecting availability, authenticity, integrity or
+          confidentiality, the criticality of the services affected, and the economic impact. Regulatory technical
+          standards specify the materiality thresholds for major incidents.
+      - article: "19"
+        title: "Reporting of major ICT-related incidents"
+        text: >-
+          Financial entities must report major ICT-related incidents to their competent authority. They submit an
+          initial notification, intermediate reports as the situation evolves, and a final report once the root cause
+          analysis is complete and actual impact figures are available. When a major incident affects the financial
+          interests of clients, the entity must inform them without undue delay of the incident and of the measures
+          taken. Significant cyber threats may be notified on a voluntary basis. Reporting may be outsourced, but the
+          entity remains fully responsible. The detailed time limits are set in technical standards.
+      - article: "24"
+        title: "General requirements for digital operational resilience testing"
+        text: >-
+          Financial entities other than microenterprises must establish, maintain and review a sound and comprehensive
+          digital operational resilience testing programme, applying a risk-based approach. Tests are carried out by
+          independent parties, internal or external, and all ICT systems and applications supporting critical or
+          important functions must be tested at least yearly. Identified weaknesses must be classified, prioritised and
+          remediated.
+      - article: "26"
+        title: "Advanced testing based on threat-led penetration testing (TLPT)"
+        text: >-
+          Financial entities identified by competent authorities must carry out threat-led penetration testing at least
+          every three years. Each test covers several or all critical or important functions and is performed on live
+          production systems. Where ICT third-party providers are in scope, the entity ensures their participation.
+          At the end of the test, the entity and testers provide a summary of findings, remediation plans and
+          documentation, and the authority issues an attestation.
+      - article: "28"
+        title: "General principles on ICT third-party risk"
+        text: >-
+          Financial entities manage ICT third-party risk as an integral part of ICT risk and remain fully responsible
+          for compliance when they use ICT third-party services. They adopt a strategy on ICT third-party risk, maintain
+          and update a register of information on all contractual arrangements for ICT services, report it to the
+          competent authority at least yearly, inform the authority in a timely manner of planned arrangements for
+          critical or important functions, assess risks and perform due diligence before contracting, and define exit
+          strategies for ICT services supporting critical or important functions.
+      - article: "30"
+        title: "Key contractual provisions"
+        text: >-
+          Contracts for ICT services must include, among other things, a clear description of the services, the
+          locations where data is processed, provisions on availability, authenticity, integrity and confidentiality of
+          data, the access, recovery and return of data on insolvency or termination, service level descriptions,
+          assistance in ICT incidents, cooperation with competent authorities and termination rights. For services
+          supporting critical or important functions they must also include precise quantitative and qualitative
+          service levels, notice periods, business contingency plans, participation in TLPT, unrestricted rights of
+          access, inspection and audit, and exit strategies with a mandatory transition period.
+
+  # ------------------------------------------------------------- EBA guidelines
+  - regulation: EBA_GL_ICT
+    celex: "EBA/GL/2019/04"
+    articles:
+      - article: "Section 3.2"
+        title: "Governance and strategy for ICT and security risk"
+        text: >-
+          The management body should ensure that the institution has an adequate internal governance and control
+          framework for ICT and security risks, set clear roles and responsibilities, allocate appropriate budget and
+          ensure that staff receive appropriate ICT and security training on a regular basis, at least annually. The
+          ICT strategy should be aligned with the overall business strategy. For entities in scope of DORA, the binding DORA
+          requirements prevail; the current status of these guidelines should be checked on the EBA website.
+      - article: "Section 3.4"
+        title: "Information security: logical access and monitoring"
+        text: >-
+          Institutions should define and implement an information security policy and procedures to limit logical
+          access to information assets on a need-to-know basis with least privilege, enforce segregation of duties,
+          log and monitor privileged access, require strong authentication for remote and privileged access, review
+          access rights periodically, and run security monitoring to detect anomalous activities.
+  - regulation: EBA_GL_OUTSOURCING
+    celex: "EBA/GL/2019/02"
+    articles:
+      - article: "Section 11"
+        title: "Documentation requirements: register of outsourcing arrangements"
+        text: >-
+          Institutions should maintain an updated register of information on all outsourcing arrangements, distinguishing
+          the outsourcing of critical or important functions, with for each arrangement a reference number, start and
+          end dates, a description of the outsourced function and data involved, the service provider, the location of
+          service and data, and the date of the last criticality assessment. The register is made available to the
+          competent authority on request.
+      - article: "Section 15"
+        title: "Exit strategies"
+        text: >-
+          For outsourcing of critical or important functions, institutions should have a documented exit strategy that
+          is compliant with their policies and business continuity plans, covering the termination of the arrangement,
+          the failure of the service provider, and a deterioration of service quality. Exit plans should be
+          comprehensive, documented and sufficiently tested, define triggers and objectives, and allow the function to
+          be transferred to another provider or reintegrated without undue disruption.

@@ -1,0 +1,64 @@
+# Data contract: anonymised claims (silver). FICTIONAL DATA.
+id: claims_silver
+version: 1.0.0
+status: active
+owner: claims-operations (fictional)
+description: >
+  Claims after anonymisation: direct identifiers removed or pseudonymised, free text redacted.
+  Pseudonymised data is still personal data under the GDPR (Art. 4(5)), so the table is
+  internal, not public. This is the only claims table the copilot and analysts may read.
+classification: internal
+contains_personal_data: pseudonymised
+tables:
+  databricks: workspace.compliance_copilot.silver_claims
+retention: 5 years after claim closure (illustrative)
+schema:
+  - name: claim_id
+    type: string
+    required: true
+    unique: true
+    pattern: "^CLM-\\d{4}-\\d{6}$"
+  - name: customer_pseudo_id
+    type: string
+    required: true
+    pattern: "^psd_[0-9a-f]{16}$"
+  - name: line_of_business
+    type: string
+    required: true
+    enum: [auto, home, liability, travel]
+  - name: channel
+    type: string
+    required: true
+    enum: [web, phone, agent]
+  - name: policy_start_date
+    type: date
+    required: true
+  - name: incident_date
+    type: date
+    required: true
+  - name: report_date
+    type: date
+    required: true
+  - name: report_delay_days
+    type: integer
+    required: true
+    min: 0
+  - name: amount_claimed_eur
+    type: float
+    required: true
+    min: 0
+  - name: description_redacted
+    type: string
+    required: true
+    no_pii: true
+  - name: is_synthetic
+    type: boolean
+    required: true
+    equals: true
+forbidden_columns: [customer_name, customer_email, customer_phone, iban]
+quality:
+  - rule: row_count_min
+    value: 50
+  - rule: column_gte
+    left: report_date
+    right: incident_date

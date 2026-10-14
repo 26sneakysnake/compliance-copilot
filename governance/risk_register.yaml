@@ -1,0 +1,195 @@
+# Risk register for the compliance copilot and the claims triage.
+# FICTIONAL organisation ("Banque du Vexin" group, insurer "Assurances du Vexin").
+# Governance as code: `ccp risk-register` checks that every regulatory reference exists in the
+# corpus and that every control points to evidence that exists in this repository, then renders
+# docs/risk_register.md. CI runs the check, so a deleted control breaks the build.
+version: 1.0.0
+last_review: "2026-10-14"
+owner: AI governance lead (fictional)
+scales:
+  likelihood: "1 rare, 2 unlikely, 3 possible, 4 likely, 5 almost certain"
+  impact: "1 negligible, 2 minor, 3 moderate, 4 major, 5 severe"
+
+systems:
+  - id: SYS-1
+    name: Compliance copilot (RAG question answering)
+    purpose: Help compliance staff find and cite the relevant provisions of the AI Act, DORA, GDPR and EBA guidelines.
+    users: Internal compliance analysts. Not customer facing.
+    ai_act_role: deployer (and provider of the in-house system)
+    ai_act_classification: not high-risk
+    rationale: >
+      Not an Annex III use case and not a product safety component. It supports, and does not replace,
+      the assessment of a qualified person. Transparency duties of Article 50(1) still apply because users
+      interact with an AI system, and the AI literacy duty of Article 4 applies to the staff using it.
+    regulatory_refs: [AI_ACT-6, AI_ACT-50, AI_ACT-4]
+  - id: SYS-2
+    name: Claims triage (property and casualty)
+    purpose: Suggest a handling queue (fast track, standard, human review) for incoming claims.
+    users: Claims handlers of the fictional insurer.
+    ai_act_role: deployer (and provider of the in-house system)
+    ai_act_classification: not high-risk, under conditions
+    rationale: >
+      Annex III point 5(c) covers risk assessment and pricing for natural persons in life and health insurance
+      only. Routing property and casualty claims is not listed, and the system only performs a preparatory
+      task (Article 6(3)). It never rejects a claim nor sets an indemnity, so no decision is based solely on
+      automated processing (GDPR Article 22). Re-assess before any extension to health insurance, to pricing,
+      or to automatic rejection: each of these would change the classification.
+    regulatory_refs: [AI_ACT-annex-iii-5, AI_ACT-6, GDPR-22]
+
+risks:
+  - id: R01
+    system: SYS-1
+    title: Hallucinated or unsupported answer
+    description: The model states an obligation that is not in the regulation, and staff act on it.
+    likelihood: 4
+    impact: 4
+    controls:
+      - description: Answers are generated only from retrieved passages; refusal when no passage scores high enough.
+        evidence: [ccp/rag.py, config/rag.yaml, tests/test_rag.py]
+      - description: Every sentence must cite a retrieved passage; invented citations are stripped, uncited answers refused.
+        evidence: [ccp/rag.py, tests/test_rag.py]
+      - description: Golden set with out-of-scope questions; CI fails if refusal recall or citation metrics regress.
+        evidence: [eval/golden_set.yaml, eval/thresholds.yaml, .github/workflows/ci.yml]
+    residual_likelihood: 2
+    residual_impact: 3
+    regulatory_refs: [AI_ACT-15, AI_ACT-9]
+    owner: Product owner, compliance copilot
+    status: mitigated
+
+  - id: R02
+    system: SYS-1
+    title: Outdated legal content
+    description: An amendment (for example the Digital Omnibus on AI) changes dates or duties and the corpus is not updated.
+    likelihood: 3
+    impact: 4
+    controls:
+      - description: Corpus versioned under a data contract with a quarterly review SLA and a last_reviewed date.
+        evidence: [contracts/regulatory_chunks.yaml, data/corpus/sample_corpus.yaml]
+      - description: Official texts re-fetched from EUR-Lex with source links kept on every chunk.
+        evidence: [ccp/eurlex.py, tests/test_eurlex.py]
+    residual_likelihood: 2
+    residual_impact: 3
+    regulatory_refs: [AI_ACT-113, AI_ACT_OMNIBUS-summary]
+    owner: Compliance data team
+    status: mitigated
+
+  - id: R03
+    system: SYS-1
+    title: Users over-rely on the copilot (automation bias)
+    description: Staff copy answers into policies without checking the official text.
+    likelihood: 3
+    impact: 3
+    controls:
+      - description: Disclaimer and AI disclosure on every answer and every HTTP response.
+        evidence: [ccp/rag.py, ccp/api.py, tests/test_api.py]
+      - description: Model card states intended use, limits and that answers are not legal advice.
+        evidence: [docs/model_card.md]
+    residual_likelihood: 2
+    residual_impact: 3
+    regulatory_refs: [AI_ACT-50, AI_ACT-4, AI_ACT-14]
+    owner: Head of compliance (fictional)
+    status: partially mitigated (AI literacy training plan not in scope of this repo)
+
+  - id: R04
+    system: SYS-1
+    title: Prompt injection through the question
+    description: A user tries to override the rules to obtain unsupported content or the system prompt.
+    likelihood: 3
+    impact: 2
+    controls:
+      - description: Input guard refuses instruction-override patterns; the prompt instructs the model to ignore them.
+        evidence: [ccp/rag.py, prompts/compliance_answer/v2.yaml, tests/test_rag.py]
+      - description: Adversarial items in the golden set.
+        evidence: [eval/golden_set.yaml]
+    residual_likelihood: 2
+    residual_impact: 2
+    regulatory_refs: [AI_ACT-15]
+    owner: Product owner, compliance copilot
+    status: mitigated (pattern-based, not exhaustive)
+
+  - id: R05
+    system: SYS-2
+    title: Personal data sent to the model provider or exposed to analysts
+    description: Names, phone numbers, IBANs or health details in claim texts leave the perimeter or reach unauthorised staff.
+    likelihood: 4
+    impact: 4
+    controls:
+      - description: Redaction of identifiers before any model call and in the silver layer; customer ids pseudonymised.
+        evidence: [ccp/redact.py, ccp/pipeline.py, tests/test_redact.py]
+      - description: Silver data contract forbids identifier columns and checks free text for personal data patterns.
+        evidence: [contracts/claims_silver.yaml, tests/test_contracts.py]
+      - description: Raw claims readable only by the data engineering role; API roles never see bronze data.
+        evidence: [governance/access_roles.yaml, databricks/03_gold_and_governance.py]
+    residual_likelihood: 2
+    residual_impact: 4
+    regulatory_refs: [GDPR-5, GDPR-25, GDPR-32, GDPR-9]
+    owner: Data protection officer (fictional)
+    status: partially mitigated (regex redaction misses free-text identifiers)
+
+  - id: R06
+    system: SYS-2
+    title: A claim that needs a human is fast-tracked
+    description: Injury, an uninhabitable home or fraud signals are missed and the claim is handled as routine.
+    likelihood: 3
+    impact: 4
+    controls:
+      - description: Deterministic routing policy; high urgency, review signals and unreadable input always go to human review.
+        evidence: [ccp/triage.py, tests/test_triage.py]
+      - description: CI gate requires human_review_recall = 1.0 and zero missed human reviews on the evaluation set.
+        evidence: [eval/thresholds.yaml, ccp/eval/metrics.py]
+    residual_likelihood: 2
+    residual_impact: 3
+    regulatory_refs: [AI_ACT-14, GDPR-22]
+    owner: Head of claims (fictional)
+    status: mitigated on synthetic data, to be confirmed on real claims
+
+  - id: R07
+    system: SYS-2
+    title: Unfair treatment of some customers
+    description: Routing differs by customer group in ways not justified by the claim.
+    likelihood: 2
+    impact: 4
+    controls:
+      - description: No customer attributes are used by the triage; only the claim text, amount and dates.
+        evidence: [ccp/triage.py]
+      - description: Re-classification trigger documented if the scope extends to health insurance or pricing.
+        evidence: [governance/risk_register.yaml]
+    residual_likelihood: 1
+    residual_impact: 4
+    regulatory_refs: [AI_ACT-10, GDPR-22]
+    owner: AI governance lead (fictional)
+    status: monitored
+
+  - id: R08
+    system: SYS-1
+    title: No trace of who asked what
+    description: Without logs the bank cannot investigate an incident or show accountability to a supervisor.
+    likelihood: 3
+    impact: 3
+    controls:
+      - description: Hash-chained audit log of every question and triage, with pseudonymised users and redacted text.
+        evidence: [ccp/audit.py, tests/test_audit.py]
+      - description: Traces with latency, tokens, cost and prompt version, exportable over OpenTelemetry.
+        evidence: [ccp/tracing.py, tests/test_tracing.py]
+    residual_likelihood: 1
+    residual_impact: 2
+    regulatory_refs: [AI_ACT-12, AI_ACT-26, GDPR-5]
+    owner: Product owner, compliance copilot
+    status: mitigated (WORM storage planned for production)
+
+  - id: R09
+    system: SYS-1
+    title: Third-party model provider outage or change
+    description: The LLM API is unavailable, changes behaviour, or changes price.
+    likelihood: 3
+    impact: 3
+    controls:
+      - description: Extractive offline mode as fallback; model and prompt pinned and recorded in every trace.
+        evidence: [ccp/rag.py, ccp/prompts.py, config/pricing.yaml]
+      - description: Evaluation must be re-run and pass the gate before any model or prompt change.
+        evidence: [eval/thresholds.yaml, .github/workflows/eval-llm.yml]
+    residual_likelihood: 2
+    residual_impact: 2
+    regulatory_refs: [DORA-28, DORA-30]
+    owner: IT third-party risk manager (fictional)
+    status: mitigated

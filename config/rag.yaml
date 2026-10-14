@@ -1,0 +1,6 @@
+# Retrieval and refusal settings. Thresholds are tuned on the "dev" split of
+# eval/golden_set.yaml only; the "test" split is used for reporting.
+top_k: 4
+min_top_score: 3.0        # BM25 score of the best passage below which the copilot refuses (dev: answerable >= 3.79)
+min_query_coverage: 0.5   # share of query terms found in retrieved passages (dev: unanswerable <= 0.40, answerable >= 0.67)
+max_question_chars: 1000

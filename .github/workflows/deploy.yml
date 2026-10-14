@@ -1,0 +1,69 @@
+name: deploy
+# Builds the image, pushes it to GitHub Container Registry, and deploys it to
+# Azure Container Apps once CI has passed on main.
+# Azure deployment is skipped until the repository variable AZURE_DEPLOY is "true"
+# and the OIDC secrets exist (see infra/README.md).
+on:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/compliance-copilot
+
+jobs:
+  build-push:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - id: meta
+        run: echo "tag=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ steps.meta.outputs.tag }}
+            ${{ env.IMAGE }}:latest
+
+  azure:
+    needs: build-push
+    if: vars.AZURE_DEPLOY == 'true'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Deploy new revision
+        run: |
+          az containerapp update \
+            --name "${{ vars.AZURE_APP_NAME || 'compliance-copilot' }}" \
+            --resource-group "${{ vars.AZURE_RESOURCE_GROUP || 'rg-compliance-copilot' }}" \
+            --image "${{ env.IMAGE }}:${{ needs.build-push.outputs.tag }}"
+      - name: Smoke test
+        run: |
+          URL=$(az containerapp show -n "${{ vars.AZURE_APP_NAME || 'compliance-copilot' }}" \
+                -g "${{ vars.AZURE_RESOURCE_GROUP || 'rg-compliance-copilot' }}" \
+                --query properties.configuration.ingress.fqdn -o tsv)
+          for i in $(seq 1 20); do curl -fsS "https://$URL/health" && exit 0; sleep 6; done
+          exit 1

@@ -1,0 +1,9 @@
+id,cas_usage,domaine,impact,effort,risque,classification_ai_act,vague
+UC1,Copilote conformité (RAG cité),Conformité,4,2,2,Non haut risque (art. 50 transparence),1
+UC2,Registre DORA des prestataires TIC,Risques TIC,3,2,1,Hors IA (automatisation),1
+UC3,Synthèse des incidents TIC majeurs,Risques TIC,3,2,2,Non haut risque,1
+UC4,Tri des réclamations IARD,Assurance,4,3,3,Non haut risque sous conditions,2
+UC5,Assistant conseiller (interne),Réseau,4,3,3,Non haut risque (art. 50),2
+UC6,Détection de fraude aux paiements,Paiements,5,4,3,Exclue de l'annexe III 5(b),2
+UC7,Score de crédit particuliers,Crédit,5,4,5,Haut risque (annexe III 5(b)),3
+UC8,Tarification santé par IA,Assurance,4,4,5,Haut risque (annexe III 5(c)),3

@@ -1,0 +1,36 @@
+name: eval-llm
+# Manual: runs the golden set with a real LLM. Costs a few cents with Claude Haiku 5.5.
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: Anthropic model id
+        default: claude-haiku-5-5
+      prompt_version:
+        description: Version of prompts/compliance_answer to evaluate (latest if empty)
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt anthropic
+      - name: Evaluate with the LLM generator and apply the gate
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CCP_PROMPT_COMPLIANCE_ANSWER_VERSION: ${{ inputs.prompt_version }}
+        run: python -m ccp.cli eval --target rag --generator anthropic --model "${{ inputs.model }}" --gate --baseline-ref origin/main
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-llm-results
+          path: results/

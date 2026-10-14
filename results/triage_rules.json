@@ -1,0 +1,31 @@
+{
+  "name": "triage_rules",
+  "git_sha": "unknown",
+  "reader": "rules",
+  "seed": 11,
+  "metrics": {
+    "n_claims": 300,
+    "category_accuracy": 0.8167,
+    "urgency_accuracy": 0.8167,
+    "route_agreement": 0.8267,
+    "human_review_recall": 1.0,
+    "missed_human_review": 0,
+    "route_confusion": {
+      "fast_track": {
+        "fast_track": 22,
+        "standard": 4,
+        "human_review": 5
+      },
+      "standard": {
+        "fast_track": 22,
+        "standard": 90,
+        "human_review": 21
+      },
+      "human_review": {
+        "fast_track": 0,
+        "standard": 0,
+        "human_review": 136
+      }
+    }
+  }
+}

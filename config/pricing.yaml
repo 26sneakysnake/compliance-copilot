@@ -1,0 +1,21 @@
+# USD per million tokens. Source: https://platform.claude.com/docs/en/about-claude/pricing
+# checked on 2026-10-14. Prices change: re-check before quoting costs.
+as_of: "2026-10-14"
+currency: USD
+models:
+  claude-haiku-5-5:
+    input: 0.10        # prompts up to 100K tokens (higher tier above, not used here)
+    output: 0.50
+  claude-sonnet-5-5:
+    input: 2.00
+    output: 10.00
+  claude-haiku-4-5:
+    input: 1.00
+    output: 5.00
+  extractive:
+    input: 0.0
+    output: 0.0
+  # local open-source models served by Ollama cost nothing per token
+  local:
+    input: 0.0
+    output: 0.0

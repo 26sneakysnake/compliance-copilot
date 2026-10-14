@@ -1,0 +1,85 @@
+# Data contract: raw insurance claims as received (bronze). FICTIONAL DATA.
+id: claims_raw
+version: 1.0.0
+status: active
+owner: claims-operations (fictional)
+description: >
+  Claims declared by policyholders of the fictional insurer "Assurances du Vexin".
+  Contains direct identifiers and possibly health data in free text (travel cancellations
+  for illness), so access is restricted and the table never leaves the bronze layer.
+classification: restricted
+contains_personal_data: true
+special_categories_possible: true   # GDPR Art. 9 (health) in free text
+legal_basis: performance of the insurance contract (GDPR Art. 6(1)(b))
+tables:
+  databricks: workspace.compliance_copilot.bronze_claims_raw
+retention: 5 years after claim closure (illustrative)
+schema:
+  - name: claim_id
+    type: string
+    required: true
+    unique: true
+    pattern: "^CLM-\\d{4}-\\d{6}$"
+  - name: policy_id
+    type: string
+    required: true
+    pattern: "^POL-\\d{6}$"
+  - name: insurer
+    type: string
+    required: true
+  - name: customer_name
+    type: string
+    required: true
+    pii: direct
+  - name: customer_email
+    type: string
+    required: true
+    pii: direct
+    pattern: "^[^@\\s]+@example\\.org$"   # synthetic data must use a reserved domain
+  - name: customer_phone
+    type: string
+    required: true
+    pii: direct
+  - name: iban
+    type: string
+    required: true
+    pii: direct
+  - name: line_of_business
+    type: string
+    required: true
+    enum: [auto, home, liability, travel]
+  - name: channel
+    type: string
+    required: true
+    enum: [web, phone, agent]
+  - name: policy_start_date
+    type: date
+    required: true
+  - name: incident_date
+    type: date
+    required: true
+  - name: report_date
+    type: date
+    required: true
+  - name: amount_claimed_eur
+    type: float
+    required: true
+    min: 0
+    max: 1000000
+  - name: description
+    type: string
+    required: true
+    min_length: 10
+  - name: is_synthetic
+    type: boolean
+    required: true
+    equals: true
+quality:
+  - rule: row_count_min
+    value: 50
+  - rule: column_gte
+    left: report_date
+    right: incident_date
+  - rule: column_gte
+    left: incident_date
+    right: policy_start_date

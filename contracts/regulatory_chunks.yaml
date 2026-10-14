@@ -1,0 +1,61 @@
+# Data contract: regulatory text chunks used for retrieval.
+# Lightweight format inspired by the Open Data Contract Standard (ODCS).
+id: regulatory_chunks
+version: 1.1.0
+status: active
+owner: compliance-data-team (fictional)
+description: >
+  One row per article (or article part) of a regulatory text. Source of record is EUR-Lex
+  or the EBA website. The committed sample corpus contains paraphrases (text_type = paraphrase)
+  for offline testing only.
+classification: public
+contains_personal_data: false
+tables:
+  databricks: workspace.compliance_copilot.silver_regulatory_chunks
+retention: keep until superseded by a newer version of the act
+schema:
+  - name: chunk_id
+    type: string
+    required: true
+    unique: true
+    pattern: "^[A-Z][A-Z_]+-[a-z0-9]+(?:-[a-z0-9]+)*$"
+    description: Stable identifier used in citations, e.g. GDPR-33.
+  - name: regulation
+    type: string
+    required: true
+    enum: [AI_ACT, AI_ACT_OMNIBUS, GDPR, DORA, EBA_GL_ICT, EBA_GL_OUTSOURCING]
+  - name: celex
+    type: string
+    required: true
+    description: CELEX number for EU acts, EBA reference for guidelines.
+  - name: article
+    type: string
+    required: true
+  - name: title
+    type: string
+    required: true
+    min_length: 3
+  - name: text
+    type: string
+    required: true
+    min_length: 80
+    max_length: 4000
+  - name: source_url
+    type: string
+    required: true
+    pattern: "^https://(eur-lex\\.europa\\.eu|www\\.eba\\.europa\\.eu)/"
+  - name: text_type
+    type: string
+    required: true
+    enum: [paraphrase, official]
+  - name: language
+    type: string
+    required: true
+    enum: [en, fr]
+quality:
+  - rule: row_count_min
+    value: 40
+  - rule: regulations_present
+    value: [AI_ACT, GDPR, DORA]
+sla:
+  freshness: reviewed at least quarterly and after every amendment published in the Official Journal

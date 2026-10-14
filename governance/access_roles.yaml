@@ -1,0 +1,33 @@
+# Role-based access, enforced by the API (ccp/api.py) and mirrored by the
+# Unity Catalog GRANTs in databricks/03_gold_and_governance.py.
+# Principle of least privilege (GDPR Art. 25 and 32, DORA Art. 9).
+roles:
+  analyst:
+    description: Compliance analyst of the fictional bank. Asks regulatory questions.
+    api: [ask]
+    databricks:
+      silver_regulatory_chunks: SELECT
+      gold_eval_runs: SELECT
+  claims_handler:
+    description: Claims handler of the fictional insurer. Uses triage, sees anonymised claims only.
+    api: [triage]
+    databricks:
+      silver_claims: SELECT
+      gold_claims_triage: SELECT
+  auditor:
+    description: Internal audit / second line. Reads the audit log and monitoring, cannot ask or triage.
+    api: [read_audit, read_metrics]
+    databricks:
+      gold_eval_runs: SELECT
+      gold_claims_triage: SELECT
+      audit_log: SELECT
+  data_engineer:
+    description: Builds the pipeline. Only role allowed to read raw (bronze) claims, which contain identifiers.
+    api: []
+    databricks:
+      bronze_claims_raw: [SELECT, MODIFY]
+      silver_claims: [SELECT, MODIFY]
+      silver_regulatory_chunks: [SELECT, MODIFY]
+separation_of_duties:
+  - The auditor role cannot use the copilot, so it cannot generate the entries it reviews.
+  - No API role can read bronze_claims_raw.
