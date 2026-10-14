@@ -41,18 +41,23 @@ URL=$(az containerapp show -n "$APP" -g "$RG" --query properties.configuration.i
 echo "API: https://$URL/docs"
 
 # --- GitHub Actions OIDC (no secret stored in GitHub) -------------------------------
+# A user-assigned managed identity with a federated credential: unlike an app registration,
+# it needs no Entra ID (tenant) rights, only rights on the subscription. Works in school tenants.
 SUB=$(az account show --query id -o tsv)
 TENANT=$(az account show --query tenantId -o tsv)
-APP_ID=$(az ad app create --display-name "gh-${REPO}-deploy" --query appId -o tsv)
-az ad sp create --id "$APP_ID" -o none || true
-az role assignment create --assignee "$APP_ID" --role Contributor \
-  --scope "/subscriptions/$SUB/resourceGroups/$RG" -o none
-az ad app federated-credential create --id "$APP_ID" --parameters "{
-  \"name\": \"github-production\",
-  \"issuer\": \"https://token.actions.githubusercontent.com\",
-  \"subject\": \"repo:${OWNER}/${REPO}:environment:production\",
-  \"audiences\": [\"api://AzureADTokenExchange\"]
-}" -o none
+az identity create -n "id-${REPO}-deploy" -g "$RG" -l "$LOCATION" -o none
+APP_ID=$(az identity show -n "id-${REPO}-deploy" -g "$RG" --query clientId -o tsv)
+PRINCIPAL_ID=$(az identity show -n "id-${REPO}-deploy" -g "$RG" --query principalId -o tsv)
+az identity federated-credential create --name github-production \
+  --identity-name "id-${REPO}-deploy" --resource-group "$RG" \
+  --issuer "https://token.actions.githubusercontent.com" \
+  --subject "repo:${OWNER}/${REPO}:environment:production" \
+  --audiences "api://AzureADTokenExchange" -o none
+for i in 1 2 3 4 5 6; do   # the new identity can take a few seconds to be visible
+  az role assignment create --assignee-object-id "$PRINCIPAL_ID" --assignee-principal-type ServicePrincipal \
+    --role Contributor --scope "/subscriptions/$SUB/resourceGroups/$RG" -o none && break
+  sleep 10
+done
 
 cat <<OUT
 

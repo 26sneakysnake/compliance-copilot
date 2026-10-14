@@ -17,7 +17,7 @@ push to main -> ci (tests, data contracts, eval gate, governance, docker smoke t
 2. Run CI once on `main` so the deploy workflow publishes `ghcr.io/<owner>/compliance-copilot:latest`,
    then make the package public (GitHub > Packages > compliance-copilot > Package settings).
 3. `az login` then `./infra/azure_setup.sh`. It creates the resource group, the Container Apps
-   environment and app, and a GitHub OIDC identity (no long-lived secret in GitHub).
+   environment and app, and a managed identity trusted by GitHub Actions through OIDC (no long-lived secret in GitHub, no tenant admin rights needed).
 4. Add the secrets and variables printed by the script. The next push to `main` deploys
    automatically, then smoke-tests `/health`.
 
