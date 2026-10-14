@@ -67,11 +67,23 @@ TENANT=$(az account show --query tenantId -o tsv)
 az identity create -n "id-${REPO}-deploy" -g "$RG" -l "$LOCATION" -o none
 APP_ID=$(az identity show -n "id-${REPO}-deploy" -g "$RG" --query clientId -o tsv)
 PRINCIPAL_ID=$(az identity show -n "id-${REPO}-deploy" -g "$RG" --query principalId -o tsv)
-az identity federated-credential create --name github-production \
-  --identity-name "id-${REPO}-deploy" --resource-group "$RG" \
-  --issuer "https://token.actions.githubusercontent.com" \
-  --subject "repo:${OWNER}/${REPO}:environment:production" \
-  --audiences "api://AzureADTokenExchange" -o none
+# GitHub may send the subject with immutable ids (repo:owner@<id>/repo@<id>:...) or in the classic
+# form (repo:owner/repo:...). Register both so either works.
+IDS=$(curl -fsS "https://api.github.com/repos/${OWNER}/${REPO}" | python3 -c \
+  "import sys,json; d=json.load(sys.stdin); print(d['owner']['id'], d['id'])" 2>/dev/null || true)
+SUBJECTS=("repo:${OWNER}/${REPO}:environment:production")
+if [ -n "$IDS" ]; then
+  read -r OWNER_ID REPO_ID <<< "$IDS"
+  SUBJECTS+=("repo:${OWNER}@${OWNER_ID}/${REPO}@${REPO_ID}:environment:production")
+fi
+n=0
+for subject in "${SUBJECTS[@]}"; do
+  n=$((n + 1))
+  az identity federated-credential create --name "github-production-$n" \
+    --identity-name "id-${REPO}-deploy" --resource-group "$RG" \
+    --issuer "https://token.actions.githubusercontent.com" \
+    --subject "$subject" --audiences "api://AzureADTokenExchange" -o none
+done
 for i in 1 2 3 4 5 6; do   # the new identity can take a few seconds to be visible
   az role assignment create --assignee-object-id "$PRINCIPAL_ID" --assignee-principal-type ServicePrincipal \
     --role Contributor --scope "/subscriptions/$SUB/resourceGroups/$RG" -o none && break
