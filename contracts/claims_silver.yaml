@@ -14,44 +14,55 @@ tables:
 retention: 5 years after claim closure (illustrative)
 schema:
   - name: claim_id
+    description: "Claim reference, stable join key with the triage and label tables."
     type: string
     required: true
     unique: true
     pattern: "^CLM-\\d{4}-\\d{6}$"
   - name: customer_pseudo_id
+    description: "Salted HMAC-SHA256 of the customer e-mail; joins claims of one customer without exposing who."
     type: string
     required: true
     pattern: "^psd_[0-9a-f]{16}$"
   - name: line_of_business
+    description: "Insurance product line: auto, home, liability or travel."
     type: string
     required: true
     enum: [auto, home, liability, travel]
   - name: channel
+    description: "How the claim was declared: web, phone or agent."
     type: string
     required: true
     enum: [web, phone, agent]
   - name: policy_start_date
+    description: "Policy start date (ISO). Used for the new-policy review signal."
     type: date
     required: true
   - name: incident_date
+    description: "Date of the incident (ISO)."
     type: date
     required: true
   - name: report_date
+    description: "Date the claim was declared (ISO)."
     type: date
     required: true
   - name: report_delay_days
+    description: "Days between incident and declaration; above 30 triggers human review."
     type: integer
     required: true
     min: 0
   - name: amount_claimed_eur
+    description: "Amount claimed in euros, as declared, not the indemnity."
     type: float
     required: true
     min: 0
   - name: description_redacted
+    description: "Free-text description after redaction of names, phones, e-mails, IBANs and addresses."
     type: string
     required: true
     no_pii: true
   - name: is_synthetic
+    description: "Always true: every row is synthetic."
     type: boolean
     required: true
     equals: true

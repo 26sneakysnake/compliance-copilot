@@ -147,6 +147,12 @@ lowering refusal recall. The gate now blocks any LLM run whose answer rate drops
 - **Change control**: a prompt is never edited in place; a new version must pass the gate. The model, prompt
   version and prompt hash are recorded in every trace and audit entry.
 
+## On Databricks Free Edition
+
+Tables created by the three notebooks, and the silver claims table documented from its data contract:
+
+<img src="docs/img/databricks_tables.png" alt="Tables in workspace.compliance_copilot" width="260"> <img src="docs/img/databricks_silver_claims.png" alt="silver_claims documented in Unity Catalog" width="560">
+
 ## Deploy
 
 - **Azure**: `infra/README.md` (Container Apps consumption plan, GitHub OIDC, no stored secret).
