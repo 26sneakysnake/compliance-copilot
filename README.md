@@ -9,6 +9,10 @@ It also triages **synthetic** insurance claims, under the same rule as
 [clinical-notes-eval](https://github.com/26sneakysnake/clinical-notes-eval): the system suggests, a person decides.
 The evaluation bench is carried over from that project (per-item scoring, error files, decision agreement).
 
+**Live demo** (Azure Container Apps, scales to zero, first call can take ~20 s):
+https://compliance-copilot.agreeablefield-aa8327ed.switzerlandnorth.azurecontainerapps.io/docs
+with the demo keys `demo-analyst`, `demo-claims` or `demo-auditor` in the `X-API-Key` header.
+
 > **Scope and honesty.** The bank ("Banque du Vexin") and the insurer ("Assurances du Vexin") are fictional.
 > All claims are synthetic: invented names, `example.org` e-mails, phone numbers from the ranges reserved for
 > fiction, IBANs that fail the checksum. The committed regulatory corpus is a **paraphrase** written for testing,
