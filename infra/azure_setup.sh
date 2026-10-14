@@ -8,7 +8,7 @@ set -euo pipefail
 
 OWNER="${OWNER:-26sneakysnake}"
 REPO="${REPO:-compliance-copilot}"
-LOCATION="${LOCATION:-francecentral}"
+LOCATION="${LOCATION:-}"
 RG="${RG:-rg-compliance-copilot}"
 ENV_NAME="${ENV_NAME:-cae-compliance-copilot}"
 APP="${APP:-compliance-copilot}"
@@ -29,8 +29,27 @@ for ns in Microsoft.App Microsoft.OperationalInsights; do
   fi
 done
 
-az group create -n "$RG" -l "$LOCATION" -o none
-az containerapp env create -n "$ENV_NAME" -g "$RG" -l "$LOCATION" -o none
+# Azure for Students and some company subscriptions restrict regions with an "allowed locations"
+# policy. Pick the first allowed European region unless LOCATION is set.
+if [ -z "$LOCATION" ]; then
+  ALLOWED=$(az policy assignment list --query "[].parameters.listOfAllowedLocations.value[]" -o tsv 2>/dev/null | tr 'A-Z' 'a-z')
+  LOCATION=francecentral
+  if [ -n "$ALLOWED" ]; then
+    LOCATION=$(echo "$ALLOWED" | head -1)
+    for pref in francecentral westeurope northeurope germanywestcentral swedencentral switzerlandnorth \
+                italynorth spaincentral polandcentral norwayeast uksouth; do
+      if echo "$ALLOWED" | grep -qx "$pref"; then LOCATION=$pref; break; fi
+    done
+    echo "Allowed regions: $(echo $ALLOWED)"
+  fi
+fi
+echo "Using region: $LOCATION"
+
+if ! az group show -n "$RG" -o none 2>/dev/null; then
+  az group create -n "$RG" -l "$LOCATION" -o none
+fi
+# No Log Analytics workspace: fewer resources, nothing billed, logs stay in the app (traces.jsonl, /metrics).
+az containerapp env create -n "$ENV_NAME" -g "$RG" -l "$LOCATION" --logs-destination none -o none
 
 az containerapp create -n "$APP" -g "$RG" --environment "$ENV_NAME" \
   --image "$IMAGE" --target-port 8000 --ingress external \
