@@ -15,8 +15,19 @@ APP="${APP:-compliance-copilot}"
 IMAGE="ghcr.io/${OWNER}/${REPO}:latest"
 
 az extension add --name containerapp --upgrade --only-show-errors
-az provider register --namespace Microsoft.App --wait
-az provider register --namespace Microsoft.OperationalInsights --wait
+
+# Register resource providers only when needed: registering requires Owner/Contributor on the
+# subscription, which school or company subscriptions often do not grant.
+for ns in Microsoft.App Microsoft.OperationalInsights; do
+  state=$(az provider show --namespace "$ns" --query registrationState -o tsv 2>/dev/null || echo Unknown)
+  if [ "$state" != "Registered" ]; then
+    if ! az provider register --namespace "$ns" --wait; then
+      echo "ERROR: $ns is not registered and this account cannot register it on subscription $(az account show --query name -o tsv)."
+      echo "Use a subscription where you are Owner (az account set --subscription <id>) or ask its admin to register $ns."
+      exit 1
+    fi
+  fi
+done
 
 az group create -n "$RG" -l "$LOCATION" -o none
 az containerapp env create -n "$ENV_NAME" -g "$RG" -l "$LOCATION" -o none
