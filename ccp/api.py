@@ -15,7 +15,8 @@ import os
 from functools import lru_cache
 
 import yaml
-from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi import Depends, FastAPI, HTTPException, Request, Security
+from fastapi.security import APIKeyHeader
 from pydantic import BaseModel, Field
 
 from . import __version__, config
@@ -48,7 +49,10 @@ class Principal(BaseModel):
     role: str
 
 
-def principal(x_api_key: str | None = Header(default=None)) -> Principal:
+_api_key = APIKeyHeader(name="X-API-Key", auto_error=False, description="Demo keys: demo-analyst, demo-claims, demo-auditor")
+
+
+def principal(x_api_key: str | None = Security(_api_key)) -> Principal:
     role = api_keys().get(x_api_key or "")
     if not role:
         raise HTTPException(401, "missing or unknown X-API-Key")
